@@ -3,11 +3,15 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import routes from './routes';
 import httpStatus from 'http-status';
+import morgan from 'morgan';
 import mongodbConnect from './config/db/mongodbConnect';
 
 dotenv.config();
 
 const app: Express = express();
+
+// Use Morgan in 'dev' mode
+app.use(morgan('dev'));
 
 // Middlewares
 app.use(express.json());
@@ -25,7 +29,7 @@ app.get('/', (_req: Request, res: Response) => {
 
 console.log('port', process.env.PORT);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () =>
   console.log(`Server up and running onrunning on http://localhost:${PORT}`),
 );
