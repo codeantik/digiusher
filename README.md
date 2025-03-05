@@ -21,6 +21,7 @@ Install with yarn
 ```bash
   cd backend
   yarn
+  yarn seed
   yarn dev
 ```
     
