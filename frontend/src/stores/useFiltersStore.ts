@@ -3,10 +3,10 @@ import { create } from "zustand";
 interface FilterState {
   cloudType: string;
   region: string;
-  minRam: number;
-  maxRam: number;
-  minCpu: number;
-  maxCpu: number;
+  minRam: string | number;
+  maxRam: string | number;
+  minCpu: string | number;
+  maxCpu: string | number;
   setFilters: (filters: Partial<FilterState>) => void;
 }
 

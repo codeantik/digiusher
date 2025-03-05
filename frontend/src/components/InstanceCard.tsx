@@ -1,41 +1,128 @@
-const InstanceCard = ({ instance }) => {
-    return (
-      <div className="border border-gray-200 rounded-2xl shadow-md p-6 bg-white flex flex-col items-center text-center transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Box,
+  Typography,
+  Button,
+} from '@mui/material';
+import { motion } from 'framer-motion';
+
+interface Instance {
+  id: string;
+  unit: string;
+  pricePerUnit: string;
+  vcpu: string;
+  memory: string;
+  location: string;
+  instanceType: string;
+}
+
+interface InstanceCardProps {
+  instance: Instance;
+}
+const InstanceCard = ({ instance }: InstanceCardProps) => {
+  return (
+    <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+      <Card
+        sx={{
+          maxWidth: 320,
+          minWidth: 200,
+          mx: 'auto',
+          p: 2,
+          borderRadius: 3,
+          boxShadow: 3,
+          textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          cursor: 'pointer',
+        }}
+      >
+        {/* Background Glow Effect */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: -20,
+            right: -20,
+            width: 60,
+            height: 60,
+            bgcolor: 'blue.300',
+            opacity: 0.2,
+            borderRadius: '50%',
+            filter: 'blur(40px)',
+          }}
+        />
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 10,
+            left: 10,
+            width: 40,
+            height: 40,
+            bgcolor: 'purple.300',
+            opacity: 0.2,
+            borderRadius: '50%',
+            filter: 'blur(30px)',
+          }}
+        />
+
         {/* Instance Image */}
-        <div className="w-28 h-28 flex items-center justify-center bg-gray-100 rounded-xl overflow-hidden mb-4">
-          <img
-            src={instance.image || "/assets/aws-instance.webp"}
-            alt={instance.id}
-            className="w-full h-full object-cover"
-          />
-        </div>
-  
-        {/* Instance Details */}
-        <div className="mt-2 w-full text-gray-600 text-sm space-y-1">
-          <p>
-            <span className="font-medium text-gray-800">Cloud:</span> {instance.cloudType}
-          </p>
-          <p>
-            <span className="font-medium text-gray-800">Region:</span> {instance.region}
-          </p>
-          <p>
-            <span className="font-medium text-gray-800">RAM:</span> {instance.memory} GB
-          </p>
-          <p>
-            <span className="font-medium text-gray-800">CPU:</span> {instance.vcpu} vCPUs
-          </p>
-          <p>
-            <span className="font-medium text-gray-800">Location:</span> {instance.location}
-          </p>
-        </div>
-  
-        {/* Price Tag */}
-        <div className="mt-4 py-2 px-5 bg-gradient-to-r from-blue-500 to-blue-700 text-white text-sm font-semibold rounded-full shadow-md">
-          ${instance.pricePerUnit}/{instance.unit}
-        </div>
-      </div>
-    );
-  };
-  
-  export default InstanceCard;
-  
+        <CardMedia
+          component="img"
+          image={'/aws-instance.webp'}
+          alt={instance.id}
+          sx={{
+            // width: 80,
+            // height: 80,
+            borderRadius: 2,
+            mx: 'auto',
+            boxShadow: 2,
+            border: '1px solid #ddd',
+            objectFit: 'contain',
+          }}
+        />
+
+        <CardContent>
+          {/* Instance Details */}
+          <Typography variant="body1" fontWeight="bold" gutterBottom>
+            CPU: <Typography component="span">{instance.vcpu} vCPUs</Typography>
+          </Typography>
+          <Typography variant="body1" fontWeight="bold" gutterBottom>
+            RAM: <Typography component="span">{instance.memory} GB</Typography>
+          </Typography>
+          <Typography variant="body1" fontWeight="bold" gutterBottom>
+            InstanceType:{' '}
+            <Typography component="span">{instance.instanceType}</Typography>
+          </Typography>
+          <Typography variant="body1" fontWeight="bold" gutterBottom>
+            Location:{' '}
+            <Typography component="span">{instance.location}</Typography>
+          </Typography>
+
+          {/* Price Button */}  
+          <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{
+                mt: 2,
+                py: 1,
+                bgcolor: 'linear-gradient(45deg, #1976D2, #004BA0)',
+                color: 'white',
+                fontWeight: 'bold',
+                textTransform: 'none',
+                boxShadow: 3,
+                borderRadius: 2,
+                '&:hover': { boxShadow: 5 },
+              }}
+            >
+              ${instance.pricePerUnit}/{instance.unit}
+            </Button>
+          </motion.div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+};
+
+export default InstanceCard;

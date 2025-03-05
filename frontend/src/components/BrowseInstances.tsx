@@ -2,10 +2,20 @@ import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useSearchInstances } from '../actions/filters.actions';
 import InstanceCard from './InstanceCard';
-import Spinner from './Spinner'; // Ensure this component exists
+import Spinner from './Spinner';
 import { useFilterStore } from '../stores/useFiltersStore';
 
-const BrowseInstances: React.FC = () => {
+interface Instance {
+  id: string;
+  unit: string;
+  pricePerUnit: string;
+  vcpu: string;
+  memory: string;
+  location: string;
+  instanceType: string;
+}
+
+const   BrowseInstances: React.FC = () => {
   const { cloudType, region, minRam, maxRam, minCpu, maxCpu } =
     useFilterStore();
 
@@ -19,7 +29,6 @@ const BrowseInstances: React.FC = () => {
     return [];
   };
 
-  console.log('BrowseInstances data', data);
 
   const totalInstances: number = Number(
     data?.pages?.reduce((acc, group) => acc + (group.data?.length || 0), 0) ||
@@ -43,10 +52,10 @@ const BrowseInstances: React.FC = () => {
           </div>
         }
       >
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center">
           {data?.pages?.map((group, i) => (
             <React.Fragment key={i}>
-              {group.data?.map((instance, index) => (
+              {group.data?.map((instance: Instance, index: Number) => (
                 <InstanceCard
                   key={instance.id || `${i}-${index}`}
                   instance={instance}

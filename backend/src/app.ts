@@ -27,8 +27,6 @@ app.get('/', (_req: Request, res: Response) => {
   res.status(httpStatus.OK).json({ message: 'Home Route' });
 });
 
-console.log('port', process.env.PORT);
-
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () =>
   console.log(`Server up and running onrunning on http://localhost:${PORT}`),

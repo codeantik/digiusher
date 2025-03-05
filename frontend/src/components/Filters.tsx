@@ -1,120 +1,186 @@
-import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import { ChevronUp, ChevronDown } from "lucide-react";
-import { useFilterStore } from "../stores/useFiltersStore";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { ChevronDown } from 'lucide-react';
+import { useFilterStore } from '../stores/useFiltersStore';
+import { useState } from 'react';
 
 const Filters = () => {
-  const { cloudType, region, minRam, maxRam, minCpu, maxCpu, setFilters } =
-    useFilterStore();
+  const { setFilters } = useFilterStore();
+  const [localFilters, setLocalFilters] = useState({
+    cloudType: '',
+    region: '',
+    minRam: '',
+    maxRam: '',
+    minCpu: '',
+    maxCpu: '',
+  });
+
+  const handleReset = () => {
+    setLocalFilters({
+      cloudType: '',
+      region: '',
+      minRam: '',
+      maxRam: '',
+      minCpu: '',
+      maxCpu: '',
+    });
+    setFilters({
+      cloudType: '',
+      region: '',
+      minRam: '',
+      maxRam: '',
+      minCpu: '',
+      maxCpu: '',
+    });
+  };
+
+  const handleFilter = () => {
+    setFilters(localFilters);
+  };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white shadow-lg rounded-lg p-4">
-      <Disclosure defaultOpen>
-        {({ open }) => (
-          <>
-            <DisclosureButton className="flex justify-between w-full p-3 text-lg font-semibold bg-gray-200 rounded-lg hover:bg-gray-300 transition">
-              Filters
-              {open ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </DisclosureButton>
+    <div className="w-full">
+      <Accordion defaultExpanded sx={{ borderRadius: 10, width: '100%' }}>
+        <AccordionSummary expandIcon={<ChevronDown />}>
+          <Typography variant="h6" fontWeight="bold">
+            Filters
+          </Typography>
+        </AccordionSummary>
 
-            <DisclosurePanel className="mt-4 space-y-4">
-              {/* Cloud Type */}
-              <div>
-                <label className="block text-sm font-medium">Cloud Type</label>
-                <select
-                  className="w-full p-2 border rounded"
-                  value={cloudType}
-                  onChange={(e) => setFilters({ cloudType: e.target.value })}
+        <AccordionDetails>
+          <Grid container spacing={2}>
+            {/* Cloud Type */}
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel>Cloud Type</InputLabel>
+                <Select
+                  value={localFilters.cloudType}
+                  onChange={(e) =>
+                    setLocalFilters({
+                      ...localFilters,
+                      cloudType: e.target.value,
+                    })
+                  }
                 >
-                  <option value="AWS">AWS</option>
-                </select>
-              </div>
+                  <MenuItem value="AWS">AWS</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
 
-              {/* Region */}
-              <div>
-                <label className="block text-sm font-medium">Region</label>
-                <select
-                  className="w-full p-2 border rounded"
-                  value={region}
-                  onChange={(e) => setFilters({ region: e.target.value })}
+            {/* Region */}
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel>Region</InputLabel>
+                <Select
+                  value={localFilters.region}
+                  onChange={(e) =>
+                    setLocalFilters({ ...localFilters, region: e.target.value })
+                  }
                 >
-                  <option value="eu-west-1">eu-west-1</option>
-                </select>
-              </div>
+                  <MenuItem value="eu-west-1">eu-west-1</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
 
-              {/* RAM & CPU Inputs */}
-              <div className="grid grid-cols-2 gap-4">
-                {/* Min RAM */}
-                <div>
-                  <label className="block text-sm font-medium">
-                    Min RAM (GB)
-                  </label>
-                  <input
-                    type="number"
-                    className="w-full p-2 border rounded"
-                    value={minRam}
-                    min={0}
-                    max={maxRam}
-                    onChange={(e) =>
-                      setFilters({ minRam: Number(e.target.value) })
-                    }
-                  />
-                </div>
+            {/* Min RAM */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Min RAM (GB)"
+                type="number"
+                value={localFilters.minRam}
+                inputProps={{ min: 0, max: localFilters.maxRam }}
+                onChange={(e) =>
+                  setLocalFilters({
+                    ...localFilters,
+                    minRam: e.target.value,
+                  })
+                }
+              />
+            </Grid>
 
-                {/* Max RAM */}
-                <div>
-                  <label className="block text-sm font-medium">
-                    Max RAM (GB)
-                  </label>
-                  <input
-                    type="number"
-                    className="w-full p-2 border rounded"
-                    value={maxRam}
-                    min={minRam}
-                    max={128}
-                    onChange={(e) =>
-                      setFilters({ maxRam: Number(e.target.value) })
-                    }
-                  />
-                </div>
+            {/* Max RAM */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Max RAM (GB)"
+                type="number"
+                value={localFilters.maxRam}
+                inputProps={{ min: localFilters.minRam, max: 128 }}
+                onChange={(e) =>
+                  setLocalFilters({
+                    ...localFilters,
+                    maxRam: e.target.value,
+                  })
+                }
+              />
+            </Grid>
 
-                {/* Min CPU */}
-                <div>
-                  <label className="block text-sm font-medium">
-                    Min CPU Cores
-                  </label>
-                  <input
-                    type="number"
-                    className="w-full p-2 border rounded"
-                    value={minCpu}
-                    min={1}
-                    max={maxCpu}
-                    onChange={(e) =>
-                      setFilters({ minCpu: Number(e.target.value) })
-                    }
-                  />
-                </div>
+            {/* Min CPU */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Min CPU Cores"
+                type="number"
+                value={localFilters.minCpu}
+                inputProps={{ min: 1, max: localFilters.maxCpu }}
+                onChange={(e) =>
+                  setLocalFilters({
+                    ...localFilters,
+                    minCpu: e.target.value,
+                  })
+                }
+              />
+            </Grid>
 
-                {/* Max CPU */}
-                <div>
-                  <label className="block text-sm font-medium">
-                    Max CPU Cores
-                  </label>
-                  <input
-                    type="number"
-                    className="w-full p-2 border rounded"
-                    value={maxCpu}
-                    min={minCpu}
-                    max={64}
-                    onChange={(e) =>
-                      setFilters({ maxCpu: Number(e.target.value) })
-                    }
-                  />
-                </div>
-              </div>
-            </DisclosurePanel>
-          </>
-        )}
-      </Disclosure>
+            {/* Max CPU */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Max CPU Cores"
+                type="number"
+                value={localFilters.maxCpu}
+                inputProps={{ min: localFilters.minCpu, max: 64 }}
+                onChange={(e) =>
+                  setLocalFilters({
+                    ...localFilters,
+                    maxCpu: e.target.value,
+                  })
+                }
+              />
+            </Grid>
+          </Grid>
+
+          {/* Buttons */}
+          <Box
+            mt={2}
+            display="flex"
+            justifyContent="space-between"
+            gap={4}
+            alignItems="flex-end"
+          >
+            <Button variant="contained" color="primary" onClick={handleFilter}>
+              Filter
+            </Button>
+            <Button variant="outlined" color="secondary" onClick={handleReset}>
+              Reset
+            </Button>
+          </Box>
+        </AccordionDetails>
+      </Accordion>
     </div>
   );
 };

@@ -21,17 +21,17 @@ class InstanceService {
 
     const filter: FilterQuery<any> = {};
 
-    if (minRam || maxRam) {
-      filter.memoryAsNumber = {
-        ...(minRam ? { $gte: minRam } : {}),
-        ...(maxRam ? { $lte: maxRam } : {}),
+    if (minRam !== undefined || maxRam !== undefined) {
+      filter.memory = {
+        ...(minRam !== undefined ? { $gte: minRam } : {}),
+        ...(maxRam !== undefined ? { $lte: maxRam } : {}),
       };
     }
 
-    if (minCpu || maxCpu) {
-      filter.vcpuAsNumber = {
-        ...(minCpu ? { $gte: minCpu } : {}),
-        ...(maxCpu ? { $lte: maxCpu } : {}),
+    if (minCpu !== undefined || maxCpu !== undefined) {
+      filter.vcpu = {
+        ...(minCpu !== undefined ? { $gte: minCpu } : {}),
+        ...(maxCpu !== undefined ? { $lte: maxCpu } : {}),
       };
     }
 
@@ -39,27 +39,11 @@ class InstanceService {
     const pageSize = Math.max(limit || 30, 1); // Ensure valid page size
     const skip = (pageNumber - 1) * pageSize;
 
-    const instances: Instance[] = await InstanceModel.aggregate([
-      {
-        $addFields: {
-          vcpuAsNumber: { $toInt: "$vcpu" },
-          memoryAsNumber: {
-            $toDouble: {
-              $replaceAll: {
-                input: "$memory",
-                find: " GiB",
-                replacement: "",
-              },
-            },
-          },
-          pricePerUnitAsNumber: { $toDouble: "$pricePerUnit" },
-        },
-      },
-      { $match: filter },
-      { $sort: { memoryAsNumber: 1, vcpuAsNumber: 1 } },
-      { $skip: skip },
-      { $limit: pageSize },
-    ]);
+    const instances: Instance[] = await InstanceModel.find(filter)
+      .sort({ memory: 1, vcpu: 1 })
+      .skip(skip)
+      .limit(pageSize)
+      .select("-__v -createdAt -updatedAt -_id"); // Exclude _v, createdAt, updatedAt, and _id fields
 
     return instances;
   }
